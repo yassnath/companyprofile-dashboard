@@ -49,7 +49,8 @@ export function SignInForm({ callbackUrl }: { callbackUrl?: string }) {
     if (result?.error) {
       if (result.error === "CredentialsSignin") {
         toast.error("Email atau password tidak valid.");
-      } else if (result.error === "Configuration") {
+      } else if (result.error === "Configuration" || result.error === "CallbackRouteError") {
+        console.error("[auth] sign-in error:", result.error);
         toast.error("Konfigurasi auth/database belum siap.");
       } else {
         toast.error(`Login gagal: ${result.error}`);

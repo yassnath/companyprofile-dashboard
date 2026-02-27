@@ -51,9 +51,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new Error("Terlalu banyak percobaan login. Coba lagi sebentar.");
         }
 
-        const user = await prisma.user
-          .findUnique({ where: { email: parsed.data.email } })
-          .catch(() => null);
+        const user = await prisma.user.findUnique({ where: { email: parsed.data.email } }).catch((error) => {
+          console.error("[auth] database lookup error:", error);
+          throw new Error("Configuration");
+        });
         if (!user?.passwordHash) {
           return null;
         }
