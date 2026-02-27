@@ -10,9 +10,17 @@ import { prisma } from "@/lib/prisma";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import { signInSchema } from "@/lib/validations";
 
+const authSecret =
+  process.env.AUTH_SECRET ??
+  process.env.NEXTAUTH_SECRET ??
+  (process.env.NODE_ENV !== "production"
+    ? "solvix-local-dev-secret"
+    : undefined);
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma) as Adapter,
   trustHost: true,
+  secret: authSecret,
   pages: {
     signIn: "/auth/sign-in",
   },
@@ -43,7 +51,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new Error("Terlalu banyak percobaan login. Coba lagi sebentar.");
         }
 
-        const user = await prisma.user.findUnique({ where: { email: parsed.data.email } });
+        const user = await prisma.user
+          .findUnique({ where: { email: parsed.data.email } })
+          .catch(() => null);
         if (!user?.passwordHash) {
           return null;
         }

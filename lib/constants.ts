@@ -1,7 +1,12 @@
 import type { OrderStatus, ServiceType } from "@prisma/client";
 
 export const SITE_NAME = "Solvix Studio";
-export const SITE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const vercelHost =
+  process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+
+export const SITE_URL =
+  process.env.NEXT_PUBLIC_APP_URL ??
+  (vercelHost ? `https://${vercelHost}` : "http://localhost:3000");
 export const WHATSAPP_URL = "https://wa.me/6281234567890?text=Halo%20Solvix%20Studio%2C%20saya%20ingin%20diskusi%20project";
 
 export const serviceCatalog: {
